@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ProiectPWeb.EFCore;
@@ -11,9 +12,11 @@ using ProiectPWeb.EFCore;
 namespace ProiectPWeb.Migrations
 {
     [DbContext(typeof(EF_DataContext))]
-    partial class EF_DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230309123440_Seeding_hotel_data")]
+    partial class Seeding_hotel_data
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ProiectPWeb.EFCore;
@@ -11,9 +12,11 @@ using ProiectPWeb.EFCore;
 namespace ProiectPWeb.Migrations
 {
     [DbContext(typeof(EF_DataContext))]
-    partial class EF_DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230309103832_add_foreign_key_to_reservation")]
+    partial class add_foreign_key_to_reservation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,24 +71,6 @@ namespace ProiectPWeb.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Hotels");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "default",
-                            number_of_free_spaces = 0,
-                            number_of_rooms = 0,
-                            number_of_spaces = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Enziem Wien Hotel",
-                            number_of_free_spaces = 10,
-                            number_of_rooms = 5,
-                            number_of_spaces = 10
-                        });
                 });
 
             modelBuilder.Entity("ProiectPWeb.EFCore.Reservation", b =>
