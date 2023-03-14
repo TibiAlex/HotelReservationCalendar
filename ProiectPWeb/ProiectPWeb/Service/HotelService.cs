@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using ProiectPWeb.DTO;
 using ProiectPWeb.EFCore;
 
@@ -81,6 +82,10 @@ namespace ProiectPWeb.Service
 
         public string UpdateHotel(string name, string user_name)
         {
+            if(name == "")
+            {
+                return "The hotel name cannot be empty!";
+            }
             User owner = _context.Users.Where(u => u.name.Equals(user_name)).FirstOrDefault();
             if (owner.hotelId == 1)
             {
@@ -103,6 +108,7 @@ namespace ProiectPWeb.Service
 
         public string AddEmployee(string name, string user_name)
         {
+            if (name.Equals("")) return "empty field";
             User employee = _context.Users.Where(u => u.name.Equals(user_name)).FirstOrDefault();
             if(employee.hotelId != 1)
                 return "The user already works at a hotel!";
@@ -118,26 +124,57 @@ namespace ProiectPWeb.Service
             return "The employee has been added at the hotel!";
         }
 
-        public List<string> GetPersonall(string user_name)
+        public List<GetEmployeesDTO> GetPersonall(string user_name)
         {
             User owner = _context.Users.Where(u => u.name.Equals(user_name)).FirstOrDefault();
             if (owner.hotelId == 1)
             {
-                return new List<string>() { "the owner has not created a hotel yet" };
+                return new List<GetEmployeesDTO>() {};
             }
             else
             {
-                List<string> result = new List<string>();
+                List<GetEmployeesDTO> result = new List<GetEmployeesDTO>();
                 List<User> users = _context.Users
+                                      .Include(u => u.hotel)
                                       .Where(s => s.hotelId == owner.hotelId)
                                       .ToList();
                 for (int i = 0; i < users.Count; i++)
                 {
-                    if (users[i].role == "Personall")
-                        result.Add(users[i].name);
+                        result.Add(new GetEmployeesDTO(users[i].name, users[i].surname, users[i].role, users[i].hotel.Name));
                 }
                 return result;
             }
+        }
+
+        public List<string> GetHotelNames(string user_name)
+        {
+            User user = _context.Users.Where(u => u.name.Equals(user_name)).FirstOrDefault();
+            if (user.hotelId != 1)
+            {
+                return new List<string>() { "the user already has a hotel assigned" };
+            }
+            List<string> result = new List<string>();
+            List<Hotel> hotel = _context.Hotels
+                    .Where(h => h.Id > 1)
+                    .ToList();
+            for (int i = 0; i < hotel.Count; i++)
+                    result.Add(hotel[i].Name);
+            return result;
+        }
+
+        public GetHotelInfoDTO GetHotel(string user_name)
+        {
+            User user = _context.Users
+                .Include(u => u.hotel)
+                .Where(u => u.name.Equals(user_name))
+                .FirstOrDefault();
+            GetHotelInfoDTO getHotelInfoDTO = new GetHotelInfoDTO();
+            getHotelInfoDTO.number_of_rooms = user.hotel.number_of_rooms;
+            getHotelInfoDTO.number_of_spaces= user.hotel.number_of_spaces;
+            getHotelInfoDTO.number_of_free_spaces = user.hotel.number_of_free_spaces;
+            getHotelInfoDTO.Name = user.hotel.Name;
+            getHotelInfoDTO.role = user.role;
+            return getHotelInfoDTO;
         }
     }
 }

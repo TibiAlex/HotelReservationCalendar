@@ -22,10 +22,10 @@ namespace ProiectPWeb.Service
 
         public string SaveUser(RegisterUserDTO user)
         {
-            if (user.name.IsNullOrEmpty() ||
-                user.surname.IsNullOrEmpty() ||
-                user.password.IsNullOrEmpty() ||
-                user.role.IsNullOrEmpty())
+            if (user.name.Equals("") ||
+                user.surname.Equals("") ||
+                user.password.Equals("") ||
+                user.role.Equals(""))
             {
                 return "empty field";
             }
@@ -42,14 +42,14 @@ namespace ProiectPWeb.Service
                 CreatePasswordHash(user.password, out byte[] password_hash, out byte[] password_salt);
                 dbTable.password_hash = password_hash;
                 dbTable.password_salt = password_salt;
-                if (user.role.Equals("Owner") || user.role.Equals("Personall"))
+                if (user.role.Equals("Owner") || user.role.Equals("Personell"))
                 {
                     dbTable.role = user.role;
                 }
                 dbTable.hotel = _context.Hotels.Where(f => f.Id.Equals(1)).FirstOrDefault();
                 _context.Users.Add(dbTable);
                 _context.SaveChanges();
-                return "user created";
+                return CreateToken(dbTable);
             } 
         }
 
@@ -64,7 +64,8 @@ namespace ProiectPWeb.Service
 
         public string LoginUser(LoginUserDTO user)
         {
-            
+            if (user.name.Equals("") || user.password.Equals(""))
+                return "empty field";
             User dbTable = _context.Users.Where(u => u.name.Equals(user.name)).FirstOrDefault();
             if (dbTable == null)
             {
@@ -115,6 +116,16 @@ namespace ProiectPWeb.Service
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
             return jwt;
+        }
+
+        public string GetRole(string user_name)
+        {
+            User user = _context.Users.Where(u => u.name.Equals(user_name)).FirstOrDefault();
+            if (user == null)
+            {
+                return "Error: user not found!";
+            }
+            return user.role;
         }
     }
 }

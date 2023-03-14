@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ProiectPWeb.DTO;
 using ProiectPWeb.EFCore;
 using ProiectPWeb.Handlers;
@@ -47,6 +48,22 @@ namespace ProiectPWeb.Controllers
             {
                 string token = _db.LoginUser(user);
                 return Ok(ResponseHandler.GetAppResponse(responseType, token));
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(exception));
+            }
+        }
+
+        [HttpGet("getRole"), Authorize]
+        public IActionResult GetRole()
+        {
+            ResponseType responseType = ResponseType.Success;
+            try
+            {
+                string user_name = User.Identity.Name;
+                string role = _db.GetRole(user_name);
+                return Ok(ResponseHandler.GetAppResponse(responseType, role));
             }
             catch (Exception exception)
             {

@@ -27,7 +27,7 @@ namespace ProiectPWeb.Controllers
             try
             {
                 string user_name = User.Identity.Name;
-                List<string> response = _db.GetAllComments(user_name);
+                List<GetAllCommentsResponseDTO> response = _db.GetAllComments(user_name);
                 return Ok(ResponseHandler.GetAppResponse(responseType, response));
             }
             catch (Exception exception)
@@ -79,6 +79,22 @@ namespace ProiectPWeb.Controllers
             {
                 string user_name = User.Identity.Name;
                 string response = _db.DeleteComment(id, user_name);
+                return Ok(ResponseHandler.GetAppResponse(responseType, response));
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(exception));
+            }
+        }
+
+        [HttpGet("searchComment/{message}"), Authorize]
+        public IActionResult Search(string message)
+        {
+            ResponseType responseType = ResponseType.Success;
+            try
+            {
+                string user_name = User.Identity.Name;
+                List<string> response = _db.SearchComment(message, user_name);
                 return Ok(ResponseHandler.GetAppResponse(responseType, response));
             }
             catch (Exception exception)

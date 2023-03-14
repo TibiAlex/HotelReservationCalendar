@@ -27,7 +27,7 @@ namespace ProiectPWeb.Controllers
             try
             {
                 string user_name = User.Identity.Name;
-                List<string> response = _db.GetReservations(reservation, user_name);
+                List<GetReservationsResponseDTO> response = _db.GetReservations(reservation, user_name);
                 return Ok(ResponseHandler.GetAppResponse(responseType, response));
             }
             catch (Exception exception)

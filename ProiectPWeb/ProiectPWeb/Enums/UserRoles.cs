@@ -5,7 +5,7 @@
         public enum Roles
         {
             Owner,
-            Personall
+            Personell
         }
     }
 }

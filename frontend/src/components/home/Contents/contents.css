@@ -1,0 +1,52 @@
+.Success {
+    background-color: green;
+    color: white;
+    font-size: 16px;
+    padding: 8px 16px;
+    margin: 20px;
+}
+
+.Update {
+    background-color: rgb(189, 189, 114);
+    color: white;
+    font-size: 16px;
+    padding: 8px 16px;
+    margin: 20px;
+}
+
+.Delete {
+    background-color: red;
+    color: white;
+    font-size: 16px;
+    padding: 8px 16px;
+    margin: 20px;
+}
+
+.Close {
+    background-color: rgb(117, 110, 110);
+    color: white;
+    font-size: 16px;
+    padding: 8px 16px;
+    margin: 20px;
+}
+
+.search_style {
+	margin-top: 20px;
+	font-size: 20px;
+	border-radius: 15px;
+	margin-left: 0px;
+	text-align: center;
+}
+
+.logout {
+    margin-top: 10px;
+    font-size: 20px;
+    background-color: #333333;
+    color: aliceblue;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }

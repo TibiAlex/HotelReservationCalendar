@@ -1,0 +1,1 @@
+module.exports.API_ADDR="https://localhost:7165/"

@@ -5,6 +5,7 @@ using ProiectPWeb.EFCore;
 using ProiectPWeb.Handlers;
 using ProiectPWeb.Service;
 using System.Security.Claims;
+using System.Xml.Linq;
 using static ProiectPWeb.Enums.UserRoles;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -22,14 +23,31 @@ namespace ProiectPWeb.Controllers
         }
 
         // GET: api/<HotelController>
-        [HttpGet("getEmployees"), Authorize(Roles = "Owner")]
-        public IActionResult Get()
+        [HttpGet("getHotelNames"), Authorize]
+        public IActionResult GetHotelNames()
         {
             ResponseType responseType = ResponseType.Success;
             try
             {
                 string user_name = User.Identity.Name;
-                List<string> response = _db.GetPersonall(user_name);
+                List<string> response = _db.GetHotelNames(user_name);
+                return Ok(ResponseHandler.GetAppResponse(responseType, response));
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(exception));
+            }
+        }
+
+        // GET: api/<HotelController>
+        [HttpGet("getEmployees"), Authorize(Roles = "Owner")]
+        public IActionResult GetEmployees()
+        {
+            ResponseType responseType = ResponseType.Success;
+            try
+            {
+                string user_name = User.Identity.Name;
+                List<GetEmployeesDTO> response = _db.GetPersonall(user_name);
                 return Ok(ResponseHandler.GetAppResponse(responseType, response));
             }
             catch (Exception exception)
@@ -60,7 +78,7 @@ namespace ProiectPWeb.Controllers
         // POST
         // add a hotel to an employee
         // api/<HotelController>
-        [HttpPost("addEmployee"), Authorize(Roles = "Personall")]
+        [HttpPost("addEmployee"), Authorize(Roles = "Personell")]
         public IActionResult AddEmployee([FromBody] string name)
         {
             ResponseType responseType = ResponseType.Success;
@@ -79,8 +97,8 @@ namespace ProiectPWeb.Controllers
         // PUT
         // modify the
         // name of the hotel api/<HotelController>/5
-        [HttpPut("update/{name}"), Authorize(Roles = "Owner")]
-        public IActionResult Put(string name)
+        [HttpPut("update"), Authorize(Roles = "Owner")]
+        public IActionResult Put([FromBody] string name)
         {
             ResponseType responseType = ResponseType.Success;
             try
@@ -107,6 +125,22 @@ namespace ProiectPWeb.Controllers
                 string user_name = User.Identity.Name;
                 string response = _db.DeleteHotel(name, user_name);
                 return Ok(ResponseHandler.GetAppResponse(responseType, response));
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(exception));
+            }
+        }
+
+        [HttpGet("getHotel"), Authorize]
+        public IActionResult GetHotel()
+        {
+            ResponseType responseType = ResponseType.Success;
+            try
+            {
+                string user_name = User.Identity.Name;
+                GetHotelInfoDTO getHotelInfoDTO = _db.GetHotel(user_name);
+                return Ok(ResponseHandler.GetAppResponse(responseType, getHotelInfoDTO));
             }
             catch (Exception exception)
             {

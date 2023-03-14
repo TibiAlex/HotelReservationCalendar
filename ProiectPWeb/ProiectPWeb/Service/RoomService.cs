@@ -64,18 +64,18 @@ namespace ProiectPWeb.Service
             return "The room has been deleted!";
         }
 
-        public List<string> GetAllRooms(string user_name)
+        public List<GetAllRoomsDTO> GetAllRooms(string user_name)
         {
             User owner = _context.Users.Where(u => u.name.Equals(user_name)).FirstOrDefault();
             if (owner.hotelId == 1)
-                return new List<string>() { "There is no hotel profile created!" };
-            List<string> result = new List<string>();
+                return new List<GetAllRoomsDTO>() { };
+            List<GetAllRoomsDTO> result = new List<GetAllRoomsDTO>();
             List<Room> rooms = _context.Rooms
                                   .Where(r => r.hotelId == owner.hotelId)
                                   .ToList();
             for (int i = 0; i < rooms.Count; i++)
             {
-                result.Add("Number: " + rooms[i].number + " - Capacity: " + rooms[i].number_of_persons);
+                result.Add(new GetAllRoomsDTO(rooms[i].number, rooms[i].number_of_persons));
             }
             return result;
         }

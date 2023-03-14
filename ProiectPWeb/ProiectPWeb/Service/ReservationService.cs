@@ -68,7 +68,7 @@ namespace ProiectPWeb.Service
             return "The reservation has been deleted!";
         }
 
-        public List<string> GetReservations(GetReservationsDTO reservations,string user_name)
+        public List<GetReservationsResponseDTO> GetReservations(GetReservationsDTO reservations,string user_name)
         {
             DateTime sdt = new DateTime(reservations.startDate.Year,
                 reservations.startDate.Month,
@@ -78,8 +78,8 @@ namespace ProiectPWeb.Service
                 reservations.endDate.Day, 0, 0, 0, 0, DateTimeKind.Utc);
             User user = _context.Users.Where(u => u.name.Equals(user_name)).FirstOrDefault();
             if (user.hotelId == 1)
-                return new List<string>() { "You currently have no hotel profile created" };
-            List<string> result = new List<string>();
+                return new List<GetReservationsResponseDTO>() { };
+            List<GetReservationsResponseDTO> result = new List<GetReservationsResponseDTO>();
             List<Room> dbRooms = _context.Rooms
                 .Include(room => room.reservations)
                 .Where(room => room.hotelId == user.hotelId)
@@ -89,7 +89,8 @@ namespace ProiectPWeb.Service
                 foreach (Reservation reservation in dbRooms[i].reservations)
                 {
                     if (reservation.dateTime.Ticks >= sdt.Ticks && reservation.dateTime.Ticks <= edt.Ticks)
-                    result.Add("Room number: " + dbRooms[i].number + " Date: " + reservation.dateTime);
+                        result.Add(new GetReservationsResponseDTO(
+                            dbRooms[i].number, reservation.dateTime, reservation.Id, dbRooms[i].number_of_persons));
                 } 
             }
             return result;

@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using ProiectPWeb.DTO;
 using ProiectPWeb.EFCore;
+using System.Runtime.ConstrainedExecution;
 
 namespace ProiectPWeb.Service
 {
@@ -59,8 +60,27 @@ namespace ProiectPWeb.Service
             return "The comment has been deleted";
         }
 
-        public List<string> GetAllComments(string user_name)
+        public List<GetAllCommentsResponseDTO> GetAllComments(string user_name)
         {
+            User user = _context.Users.Where(u => u.name.Equals(user_name)).FirstOrDefault();
+            if (user.hotelId == 1)
+                return new List<GetAllCommentsResponseDTO>() {  };
+            List<GetAllCommentsResponseDTO> result = new List<GetAllCommentsResponseDTO>();
+            User owner = _context.Users
+                        .Include(u => u.comments)
+                        .Where(u => u.hotelId.Equals(user.hotelId) && u.role.Equals("Owner"))
+                        .FirstOrDefault();
+            foreach(Comment comment in owner.comments)
+            {
+                result.Add(new GetAllCommentsResponseDTO(
+                    comment.message, comment.Id, owner.name));
+            }
+            return result;
+        }
+
+        public List<string> SearchComment(string message, string user_name)
+        {
+            if (message.IsNullOrEmpty()) return new List<string>() { "empty message!" };
             User user = _context.Users.Where(u => u.name.Equals(user_name)).FirstOrDefault();
             if (user.hotelId == 1)
                 return new List<string>() { "There is no hotel profile created!" };
@@ -69,9 +89,10 @@ namespace ProiectPWeb.Service
                         .Include(u => u.comments)
                         .Where(u => u.hotelId.Equals(user.hotelId) && u.role.Equals("Owner"))
                         .FirstOrDefault();
-            foreach(Comment comment in owner.comments)
+            foreach (Comment comment in owner.comments)
             {
-                result.Add(comment.message);
+                if (comment.message.Contains(message))
+                    result.Add(comment.message);
             }
             return result;
         }
